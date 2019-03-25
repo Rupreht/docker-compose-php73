@@ -48,8 +48,6 @@ RUN git clone https://github.com/Jan-E/php_excel.git -b php7-issue241 php_excel 
         && make install \
         && docker-php-ext-enable excel
 
-#RUN docker-php-ext-install mysqli && docker-php-ext-enable mysqli
-
 RUN docker-php-ext-configure bcmath --enable-bcmath \
     && docker-php-ext-configure mysqli --with-mysqli \
     && docker-php-ext-install pdo_mysql \
