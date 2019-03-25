@@ -1,4 +1,4 @@
-# docker-compose-php73
+# docker-compose-php73-fpm
 
 ## PHP Modules
 * bcmath
