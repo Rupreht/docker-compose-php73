@@ -1,0 +1,77 @@
+version: '3'
+
+services:
+  app:
+    container_name: app
+    restart: always
+    build:
+      ./app
+    environment:
+      TZ: ${TZ:-Asia/Yekaterinburg}
+      PRODUCTION: ${PRODUCTION:-Off}
+      SITE_ID: ${SITE_ID:-1}
+    volumes:
+      - application:/application
+      - static:/application/static
+      - media:/application/media
+    networks:
+      - frontend
+    logging:
+      driver: ${APP_LOG_DRIVER:-json-file}
+      options:
+        max-size: ${APP_LOG_MAX_SIZE:-2m}
+        max-file: ${APP_LOG_MAX_FILE:-4}
+
+  web:
+    build: ./web
+    container_name: web
+    restart: always
+    depends_on:
+      - app
+    command: nginx -g 'daemon off;'
+    environment:
+      VIRTUAL_HOST: ${VIRTUAL_HOST}
+      LETSENCRYPT_HOST: ${LETSENCRYPT_HOST}
+      LETSENCRYPT_EMAIL: ${LETSENCRYPT_EMAIL}
+      SSL_POLICY: ${SSL_POLICY:-Mozilla-Modern}
+      TZ: ${TZ:-Asia/Yekaterinburg}
+    volumes:
+      - application:/application:ro
+      - static:/application/static:ro
+      - media:/application/media:ro
+    networks:
+      - frontend
+    logging:
+      driver: ${WEB_LOG_DRIVER:-json-file}
+      options:
+        max-size: ${WEB_LOG_MAX_SIZE:-2m}
+        max-file: ${WEB_LOG_MAX_FILE:-4}
+
+  redis:
+    container_name: redis
+    image: redis
+    restart: always
+    volumes:
+      - redis:/data
+    environment:
+      TZ: ${TZ}
+    logging:
+      driver: ${REDIS_LOG_DRIVER:-json-file}
+      options:
+        max-size: ${REDIS_LOG_MAX_SIZE:-2m}
+        max-file: ${REDIS_LOG_MAX_FILE:-4}
+
+networks:
+  frontend:
+    external:
+      name: ${NET_FRONTEND:-frontend}
+#  backend:
+#    external:
+#      name: ${NET_BACKEND:-backend}
+
+volumes:
+  application: {}
+  static: {}
+  media: {}
+  redis: {}
+
