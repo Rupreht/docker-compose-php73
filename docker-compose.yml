@@ -16,6 +16,9 @@ services:
       - media:/application/media
     networks:
       - frontend
+      - backend
+    depends_on:
+      - redis
     logging:
       driver: ${APP_LOG_DRIVER:-json-file}
       options:
@@ -55,6 +58,8 @@ services:
       - redis:/data
     environment:
       TZ: ${TZ}
+    networks:
+      - backend
     logging:
       driver: ${REDIS_LOG_DRIVER:-json-file}
       options:
@@ -65,9 +70,9 @@ networks:
   frontend:
     external:
       name: ${NET_FRONTEND:-frontend}
-#  backend:
-#    external:
-#      name: ${NET_BACKEND:-backend}
+  backend:
+    external:
+      name: ${NET_BACKEND:-backend}
 
 volumes:
   application: {}
