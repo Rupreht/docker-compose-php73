@@ -58,8 +58,11 @@ RUN docker-php-ext-configure bcmath --enable-bcmath \
         pdo_mysql \
         soap
 
-RUN docker-php-source delete && \
-        apt-get clean
+RUN docker-php-source delete \
+        && apt purge -y gcc cpp g++-6 gcc-6 cpp-6 make zlib1g-dev linux-libc-dev \
+          libxml2-dev libicu-dev libgcc-6-dev libc6-dev libc-dev-bin icu-devtools \
+        && apt autoremove -y \
+        && apt-get clean
 
 COPY php.ini /etc/php7/conf.d/50-setting.ini
 COPY php-fpm.conf /etc/php7/php-fpm.conf
