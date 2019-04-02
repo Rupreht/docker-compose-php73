@@ -2,7 +2,6 @@ version: '3'
 
 services:
   app:
-    container_name: app
     restart: always
     build:
       ./app
@@ -17,8 +16,6 @@ services:
     networks:
       - frontend
       - backend
-    depends_on:
-      - redis
     logging:
       driver: ${APP_LOG_DRIVER:-json-file}
       options:
@@ -27,7 +24,6 @@ services:
 
   web:
     build: ./web
-    container_name: web
     restart: always
     depends_on:
       - app
@@ -50,22 +46,6 @@ services:
         max-size: ${WEB_LOG_MAX_SIZE:-2m}
         max-file: ${WEB_LOG_MAX_FILE:-4}
 
-  redis:
-    container_name: redis
-    image: redis
-    restart: always
-    volumes:
-      - redis:/data
-    environment:
-      TZ: ${TZ}
-    networks:
-      - backend
-    logging:
-      driver: ${REDIS_LOG_DRIVER:-json-file}
-      options:
-        max-size: ${REDIS_LOG_MAX_SIZE:-2m}
-        max-file: ${REDIS_LOG_MAX_FILE:-4}
-
 networks:
   frontend:
     external:
@@ -78,5 +58,3 @@ volumes:
   application: {}
   static: {}
   media: {}
-  redis: {}
-

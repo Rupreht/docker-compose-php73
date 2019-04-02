@@ -64,13 +64,24 @@ RUN docker-php-source delete \
         && apt autoremove -y \
         && apt-get clean
 
+RUN mkdir /application
+
+RUN mkdir -p /application/static
+
+RUN mkdir -p /application/media
+
+RUN unset PHP_MD5 \
+    && unset PHPIZE_DEPS \
+    && unset PHP_CPPFLAGS \
+    && unset PHP_VERSION \
+    && unset XL_VERSION
+
 COPY php.ini /etc/php7/conf.d/50-setting.ini
+
 COPY php-fpm.conf /etc/php7/php-fpm.conf
 
-RUN mkdir /application
-RUN mkdir -p /application/static
-RUN mkdir -p /application/media
 COPY phpinfo.php /application/phpinfo.php
+
 WORKDIR /application
 
 EXPOSE 9000
